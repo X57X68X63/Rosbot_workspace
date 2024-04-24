@@ -1,3 +1,0 @@
-[console_scripts]
-rotate_robot = my_pkg.rotate_robot:main
-
