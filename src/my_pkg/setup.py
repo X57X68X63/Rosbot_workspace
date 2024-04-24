@@ -22,7 +22,7 @@ setup(
         'console_scripts': [
             'rotate_robot = my_pkg.rotate_robot:main',
             'image_localizer = my_pkg.image_localizer:main',
-            'position_detection = my_pkg.get_distence:main'
+            'position_detection = my_pkg.position_dectection:main'
         ],
     },
 )

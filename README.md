@@ -46,9 +46,9 @@ Here are some sample Gazebo Worlds:
 * Husarion World - Husarion's deafult world and used in the Husarion ROS2 tutorials
     - ``ros2 launch rosbot_gazebo simulation.launch.py``
 * Maze - an enclosed maze developed for AIIL assignments
-    - ``ros2 launch rosbot_gazebo simulation.launch.py world:=/home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/maze.sdf``
+    - ``ros2 launch rosbot_gazebo simulation.launch.py world:=~/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/maze.sdf``
 * Maze with Hazard signs - the enclosed maze with Hazard signs scattered around the maze. This will be useful for the Search & Navigation challenge.
-    - ``ros2 launch rosbot_gazebo simulation.launch.py world:=/home/user/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/hazards.sdf``
+    - ``ros2 launch rosbot_gazebo simulation.launch.py world:=~/aiil_workspace/humble_workspace/src/aiil_gazebo/worlds/hazards.sdf``
     
 If you wish to learn about how simulation are configured, take the "Introduction to Gazebo Sim with ROS2" TheConstruct course.
 ​

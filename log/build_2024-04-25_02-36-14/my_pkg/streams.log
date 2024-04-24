@@ -1,0 +1,19 @@
+[2.348s] Invoking command in '/home/haocheng/Rosbot_workspace/build/my_pkg': PYTHONPATH=/home/haocheng/Rosbot_workspace/build/my_pkg/prefix_override:/home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/haocheng/Rosbot_workspace/build/my_pkg/build --no-deps symlink_data
+[3.305s] running develop
+[3.805s] running egg_info
+[3.805s] writing my_pkg.egg-info/PKG-INFO
+[3.806s] writing dependency_links to my_pkg.egg-info/dependency_links.txt
+[3.806s] writing entry points to my_pkg.egg-info/entry_points.txt
+[3.807s] writing requirements to my_pkg.egg-info/requires.txt
+[3.807s] writing top-level names to my_pkg.egg-info/top_level.txt
+[3.810s] reading manifest file 'my_pkg.egg-info/SOURCES.txt'
+[3.815s] writing manifest file 'my_pkg.egg-info/SOURCES.txt'
+[3.822s] running build_ext
+[3.823s] Creating /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my-pkg.egg-link (link to .)
+[3.824s] Installing image_localizer script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+[3.824s] Installing position_detection script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+[3.825s] Installing rotate_robot script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+[3.825s] 
+[3.825s] Installed /home/haocheng/Rosbot_workspace/build/my_pkg
+[3.825s] running symlink_data
+[3.895s] Invoked command in '/home/haocheng/Rosbot_workspace/build/my_pkg' returned '0': PYTHONPATH=/home/haocheng/Rosbot_workspace/build/my_pkg/prefix_override:/home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/haocheng/Rosbot_workspace/build/my_pkg/build --no-deps symlink_data

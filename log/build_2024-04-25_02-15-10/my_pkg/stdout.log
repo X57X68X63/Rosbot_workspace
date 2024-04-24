@@ -1,0 +1,27 @@
+running egg_info
+writing ../../build/my_pkg/my_pkg.egg-info/PKG-INFO
+writing dependency_links to ../../build/my_pkg/my_pkg.egg-info/dependency_links.txt
+writing entry points to ../../build/my_pkg/my_pkg.egg-info/entry_points.txt
+writing requirements to ../../build/my_pkg/my_pkg.egg-info/requires.txt
+writing top-level names to ../../build/my_pkg/my_pkg.egg-info/top_level.txt
+reading manifest file '../../build/my_pkg/my_pkg.egg-info/SOURCES.txt'
+writing manifest file '../../build/my_pkg/my_pkg.egg-info/SOURCES.txt'
+running build
+running build_py
+copying my_pkg/image_localizer.py -> /home/haocheng/Rosbot_workspace/build/my_pkg/build/lib/my_pkg
+copying my_pkg/position_dectection.py -> /home/haocheng/Rosbot_workspace/build/my_pkg/build/lib/my_pkg
+running install
+running install_lib
+copying /home/haocheng/Rosbot_workspace/build/my_pkg/build/lib/my_pkg/image_localizer.py -> /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg
+copying /home/haocheng/Rosbot_workspace/build/my_pkg/build/lib/my_pkg/position_dectection.py -> /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg
+byte-compiling /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg/image_localizer.py to image_localizer.cpython-310.pyc
+byte-compiling /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg/position_dectection.py to position_dectection.cpython-310.pyc
+running install_data
+running install_egg_info
+removing '/home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/my_pkg/my_pkg.egg-info to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg-0.0.0-py3.10.egg-info
+running install_scripts
+Installing image_localizer script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+Installing position_detection script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+Installing rotate_robot script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+writing list of installed files to '/home/haocheng/Rosbot_workspace/build/my_pkg/install.log'

@@ -1,0 +1,29 @@
+[2.374s] Invoking command in '/home/haocheng/Rosbot_workspace/src/my_pkg': PYTHONPATH=/home/haocheng/Rosbot_workspace/build/my_pkg/prefix_override:/home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_pkg build --build-base /home/haocheng/Rosbot_workspace/build/my_pkg/build install --record /home/haocheng/Rosbot_workspace/build/my_pkg/install.log --single-version-externally-managed install_data
+[3.185s] running egg_info
+[3.186s] writing ../../build/my_pkg/my_pkg.egg-info/PKG-INFO
+[3.187s] writing dependency_links to ../../build/my_pkg/my_pkg.egg-info/dependency_links.txt
+[3.188s] writing entry points to ../../build/my_pkg/my_pkg.egg-info/entry_points.txt
+[3.188s] writing requirements to ../../build/my_pkg/my_pkg.egg-info/requires.txt
+[3.189s] writing top-level names to ../../build/my_pkg/my_pkg.egg-info/top_level.txt
+[3.191s] reading manifest file '../../build/my_pkg/my_pkg.egg-info/SOURCES.txt'
+[3.192s] writing manifest file '../../build/my_pkg/my_pkg.egg-info/SOURCES.txt'
+[3.193s] running build
+[3.193s] running build_py
+[3.194s] copying my_pkg/image_localizer.py -> /home/haocheng/Rosbot_workspace/build/my_pkg/build/lib/my_pkg
+[3.194s] copying my_pkg/position_dectection.py -> /home/haocheng/Rosbot_workspace/build/my_pkg/build/lib/my_pkg
+[3.194s] running install
+[3.195s] running install_lib
+[3.196s] copying /home/haocheng/Rosbot_workspace/build/my_pkg/build/lib/my_pkg/image_localizer.py -> /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg
+[3.196s] copying /home/haocheng/Rosbot_workspace/build/my_pkg/build/lib/my_pkg/position_dectection.py -> /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg
+[3.200s] byte-compiling /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg/image_localizer.py to image_localizer.cpython-310.pyc
+[3.203s] byte-compiling /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg/position_dectection.py to position_dectection.cpython-310.pyc
+[3.204s] running install_data
+[3.204s] running install_egg_info
+[3.212s] removing '/home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg-0.0.0-py3.10.egg-info' (and everything under it)
+[3.213s] Copying ../../build/my_pkg/my_pkg.egg-info to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my_pkg-0.0.0-py3.10.egg-info
+[3.214s] running install_scripts
+[3.282s] Installing image_localizer script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+[3.282s] Installing position_detection script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+[3.283s] Installing rotate_robot script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+[3.284s] writing list of installed files to '/home/haocheng/Rosbot_workspace/build/my_pkg/install.log'
+[3.344s] Invoked command in '/home/haocheng/Rosbot_workspace/src/my_pkg' returned '0': PYTHONPATH=/home/haocheng/Rosbot_workspace/build/my_pkg/prefix_override:/home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/my_pkg build --build-base /home/haocheng/Rosbot_workspace/build/my_pkg/build install --record /home/haocheng/Rosbot_workspace/build/my_pkg/install.log --single-version-externally-managed install_data

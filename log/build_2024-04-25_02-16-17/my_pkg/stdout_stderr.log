@@ -1,0 +1,19 @@
+running develop
+running egg_info
+writing my_pkg.egg-info/PKG-INFO
+writing dependency_links to my_pkg.egg-info/dependency_links.txt
+writing entry points to my_pkg.egg-info/entry_points.txt
+writing requirements to my_pkg.egg-info/requires.txt
+writing top-level names to my_pkg.egg-info/top_level.txt
+reading manifest file 'my_pkg.egg-info/SOURCES.txt'
+writing manifest file 'my_pkg.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/haocheng/Rosbot_workspace/install/my_pkg/lib/python3.10/site-packages/my-pkg.egg-link (link to .)
+Installing image_localizer script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+Installing position_detection script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+Installing rotate_robot script to /home/haocheng/Rosbot_workspace/install/my_pkg/lib/my_pkg
+
+Installed /home/haocheng/Rosbot_workspace/build/my_pkg
+running symlink_data
+symbolically linking /home/haocheng/Rosbot_workspace/build/my_pkg/resource/my_pkg -> /home/haocheng/Rosbot_workspace/install/my_pkg/share/ament_index/resource_index/packages
+symbolically linking /home/haocheng/Rosbot_workspace/build/my_pkg/package.xml -> /home/haocheng/Rosbot_workspace/install/my_pkg/share/my_pkg
