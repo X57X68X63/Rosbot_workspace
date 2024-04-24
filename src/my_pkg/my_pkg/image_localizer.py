@@ -53,6 +53,7 @@ class ImageLocalizer(Node):
         
 
     def object_callback(self, msg):
+        self.get_logger().info(f"Object detected: {self.marked_objects}")
         if len(msg.objects.data) > 0:    
             obj = {
                 'id': msg.objects.data[0],
