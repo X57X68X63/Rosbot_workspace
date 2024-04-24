@@ -6,6 +6,7 @@ from geometry_msgs.msg import Twist
 from tf2_geometry_msgs.tf2_geometry_msgs import PointStamped
 from tf2_ros import TransformListener, Buffer
 from find_object_2d.msg import ObjectsStamped 
+from visualization_msgs.msg import Marker
 
 
 markers = {
@@ -40,11 +41,14 @@ class ImageLocalizer(Node):
         self.spin_stop_pub = self.create_publisher(Bool, 'command/stop', 10)
         self.spin_resume_pub = self.create_publisher(Bool, 'command/resume', 10)
         self.explore_pub = self.create_publisher(Bool, 'explore/resume', 10)
+        self.harzard_pub = self.create_publisher(Marker, '/hazards', 10)
         
         
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.object_distence = -1
+        
+        # should be in Marker type
         self.marked_objects = {}
         
 
@@ -130,7 +134,8 @@ class ImageLocalizer(Node):
                     'name': markers[obj['id']],
                     'position': transform.point
                 }
-                
+                # TODO: Publish the marker for the object
+
             except Exception as e:
                 self.get_logger().error(f"Error transforming point: {str(e)}")
         
