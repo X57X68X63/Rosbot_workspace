@@ -20,7 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'rotate_robot = my_pkg.rotate_robot:main'
+            'rotate_robot = my_pkg.rotate_robot:main',
+            'image_localizer = my_pkg.image_localizer:main',
+            'position_detection = my_pkg.get_distence:main'
         ],
     },
 )
