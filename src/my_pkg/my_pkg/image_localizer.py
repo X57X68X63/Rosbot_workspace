@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, PointStamped
 from tf2_ros import TransformListener, Buffer
 from find_object_2d.msg import ObjectsStamped 
 
@@ -19,7 +19,6 @@ markers = {
     61: "posion",
     62: "inhalation hazards"
 }
-
 
 
 class ImageLocalizer(Node):
@@ -56,6 +55,11 @@ class ImageLocalizer(Node):
         else:
             self.get_logger().warn("No object detected")
         
+    
+    def laser_callback(self, msg):
+        center_index = len(msg.ranges) // 2
+        self.object_distence = msg.ranges[center_index]
+    
         
     def object_available_to_mark(self, object_id):
         if not (object_id in self.marked_objects) and (object_id in markers):
@@ -64,7 +68,7 @@ class ImageLocalizer(Node):
 
 
     def rotate_to_center_object(self, obj):
-        center_x = obj['dx'] + obj['width']/2
+        center_x = obj['dx'] + obj['width'] // 2
         
         err_x = 320 - center_x
         k = 0.05
@@ -89,7 +93,19 @@ class ImageLocalizer(Node):
 
     def mark_object(self, obj):
         # Record the object's position
-        self.marked_objects[obj['id']] = obj['id']
+        if self.object_distence != -1:
+            point = PointStamped()
+            point.header.frame_id = "laser" # TODO: Change to the correct frame
+            point.header.stamp = self.get_clock().now().to_msg()
+            point.point.x = self.object_distence
+            point.point.y = 0
+            point.point.z = 0
+            
+            try:
+                transform = self.tf_buffer.transform(point, "odom")
+                self.get_logger().info(f"Object marked at: {transform.point}")
+            except Exception as e:
+                self.get_logger().error(f"Error transforming point: {str(e)}")
         
         
 
