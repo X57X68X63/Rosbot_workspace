@@ -103,17 +103,18 @@ class ImageLocalizer(Node):
         twist_msg = Twist()
         if abs(err_x) > threshold:
             speed = k * err_x
-            speed = max(min(speed, 3), 0.3)
+            speed = max(min(speed, 1.5), 0.3)
+            self.get_logger().info(f"Speed: {speed}: negative: turning right, positive: turning left")
             twist_msg.angular.z = speed
         else:
-            twist_msg.angular.z = 0
+            twist_msg.angular.z = 0.0
         
         self.twist_pub.publish(twist_msg)
-        if twist_msg.angular.z == 0:
+        if twist_msg.angular.z == 0.0:
             self.mark_object(obj)
             self.get_logger().info("Object marked")
         else:
-            self.get_logger().info(f"Rotating to center object: {err_x}")
+            self.get_logger().info(f"Rotating to center object: {center_x}")
         pass
         
 
