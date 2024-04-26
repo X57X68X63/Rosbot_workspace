@@ -1,1 +1,0 @@
-/home/haocheng/Rosbot_workspace/src/pkg1/launch/pkg1.launch.py
