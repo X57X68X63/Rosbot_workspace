@@ -37,6 +37,7 @@
  *********************************************************************/
 
 #include <explore/explore.h>
+#include <std_msgs/msg/bool.hpp>
 
 #include <thread>
 
@@ -80,6 +81,7 @@ Explore::Explore()
   this->get_parameter("return_to_init", return_to_init_);
   this->get_parameter("robot_base_frame", robot_base_frame_);
 
+
   progress_timeout_ = timeout;
   move_base_client_ =
       rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(
@@ -107,19 +109,23 @@ Explore::Explore()
   RCLCPP_INFO(logger_, "Connected to move_base nav2 server");
 
   if (return_to_init_) {
-    RCLCPP_INFO(logger_, "Getting initial pose of the robot");
-    geometry_msgs::msg::TransformStamped transformStamped;
+
+   RCLCPP_INFO(logger_, "Getting initial pose of the robot");
+    // geometry_msgs::msg::TransformStamped transformStamped;
     std::string map_frame = costmap_client_.getGlobalFrameID();
     try {
-      transformStamped = tf_buffer_.lookupTransform(
-          map_frame, robot_base_frame_, tf2::TimePointZero);
+
+    this->odom_subscriber_ = create_subscription<nav_msgs::msg::Odometry>("/odometry/filtered", 10, 
+        std::bind(&Explore::odomCallback, this, _1));
       // transformStamped = tf_buffer_.lookupTransform(
-      //     map, base_link, tf2::TimePointZero);
-      initial_pose_.position.x = transformStamped.transform.translation.x;
-      initial_pose_.position.y = transformStamped.transform.translation.y;
-      // initial_pose_.position.x = 0;
-      // initial_pose_.position.y = 0;
-      initial_pose_.orientation = transformStamped.transform.rotation;
+      //     map_frame, robot_base_frame_, tf2::TimePointZero);
+      // // transformStamped = tf_buffer_.lookupTransform(
+      // //     map, base_link, tf2::TimePointZero);
+      // initial_pose_.position.x = transformStamped.transform.translation.x;
+      // initial_pose_.position.y = transformStamped.transform.translation.y;
+      // // initial_pose_.position.x = 0;
+      // // initial_pose_.position.y = 0;
+      // initial_pose_.orientation = transformStamped.transform.rotation;
     } catch (tf2::TransformException& ex) {
       RCLCPP_ERROR(logger_, "Couldn't find transform from %s to %s: %s",
                    map_frame.c_str(), robot_base_frame_.c_str(), ex.what());
@@ -146,6 +152,11 @@ void Explore::resumeCallback(const std_msgs::msg::Bool::SharedPtr msg)
   } else {
     stop();
   }
+}
+
+void Explore::odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg) {
+    initial_pose_.position = msg->pose.pose.position;
+    initial_pose_.orientation = msg->pose.pose.orientation;
 }
 
 void Explore::visualizeFrontiers(

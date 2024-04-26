@@ -54,6 +54,7 @@
 #include <string>
 #include <vector>
 #include <visualization_msgs/msg/marker_array.hpp>
+#include <nav_msgs/msg/odometry.hpp>
 
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -109,6 +110,11 @@ private:
 
   rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
       marker_array_publisher_;
+
+    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr
+      odom_subscriber_;
+
+
   rclcpp::Logger logger_ = rclcpp::get_logger("ExploreNode");
   tf2_ros::Buffer tf_buffer_;
   tf2_ros::TransformListener tf_listener_;
@@ -122,6 +128,7 @@ private:
 
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr resume_subscription_;
   void resumeCallback(const std_msgs::msg::Bool::SharedPtr msg);
+  void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
 
   std::vector<geometry_msgs::msg::Point> frontier_blacklist_;
   geometry_msgs::msg::Point prev_goal_;
