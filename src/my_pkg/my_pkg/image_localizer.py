@@ -27,29 +27,35 @@ markers = {
 class ImageLocalizer(Node):
     def __init__(self):
         super().__init__('image_localizer')
-        self.obj_sub = self.create_subscription(ObjectsStamped, '/objectsStamped', 
-            self.object_callback, 10)
-        self.laser_sub = self.create_subscription(LaserScan, '/scan', 
-            self.laser_callback, 10)
+        
+        # Variables
+        self.is_spinning = False
+        self.is_exploring = False
+        
+        # Subscribers
         self.spin_sub = self.create_subscription(Bool, 'robot/spinning',
             self.spin_callback, 10)
         self.explore_sub = self.create_subscription(Bool, 'robot/exploring',
             self.explore_callback, 10)
+        self.obj_sub = self.create_subscription(ObjectsStamped, '/objectsStamped', 
+            self.object_callback, 10)
+        self.laser_sub = self.create_subscription(LaserScan, '/scan', 
+            self.laser_callback, 10)
         
-        
+        # Publishers
         self.twist_pub = self.create_publisher(Twist, 'cmd_vel', 10)
         self.spin_stop_pub = self.create_publisher(Bool, 'command/stop', 10)
         self.spin_resume_pub = self.create_publisher(Bool, 'command/resume', 10)
         self.explore_pub = self.create_publisher(Bool, 'explore/resume', 10)
         self.harzard_pub = self.create_publisher(Marker, '/hazards', 10)
         
-        
+        # TF2
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
-        self.object_distence = -1
         
-        # should be in Marker type
+        # Marked objects
         self.marked_objects = {}
+        self.object_distence = -1
         
 
     def object_callback(self, msg):
@@ -63,10 +69,16 @@ class ImageLocalizer(Node):
                 'dy': msg.objects.data[10]
             }
             if self.object_available_to_mark(obj['id']):
+                if self.is_spinning:
+                    self.spin_stop_pub.publish(Bool(data=True))
+                elif self.is_exploring:
+                    self.explore_pub.publish(Bool(data=False))
                 self.get_logger().info(f"New object detected: {obj['id']}")
                 self.rotate_to_center_object(obj)
             else:
-                self.get_logger().warn(f"Object already marked or not in the target list")
+                self.get_logger().warn(f"Object already marked or not in the target list, resuming spinning")
+                if not self.is_spinning and not self.is_exploring:
+                    self.spin_resume_pub.publish(Bool(data=True))
         else:
             self.get_logger().warn("No object detected")
         
@@ -77,11 +89,11 @@ class ImageLocalizer(Node):
         
     
     def spin_callback(self, msg):
-        pass
+        is_spinning = msg.data
     
     
     def explore_callback(self, msg):
-        pass
+        is_exploring = msg.data
     
         
     def object_available_to_mark(self, object_id):
@@ -96,14 +108,17 @@ class ImageLocalizer(Node):
     def rotate_to_center_object(self, obj):
         center_x = obj['dx'] + obj['width'] // 2
         
-        err_x = 320 - center_x
-        k = 0.05
-        threshold = 5
+        err_x = 319 - center_x
+        k = 1/319
+        threshold = 3
         
         twist_msg = Twist()
         if abs(err_x) > threshold:
             speed = k * err_x
-            speed = max(min(speed, 1.5), 0.3)
+            if speed > 0:
+                speed = max(min(speed, 1.0), 0.3)
+            else:
+                speed = min(max(speed, -1.0), -0.3)
             self.get_logger().info(f"Speed: {speed}: negative: turning right, positive: turning left")
             twist_msg.angular.z = speed
         else:
