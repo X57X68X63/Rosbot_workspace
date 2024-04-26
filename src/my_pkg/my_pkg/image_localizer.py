@@ -33,6 +33,8 @@ class ImageLocalizer(Node):
         self.is_spinning = False
         self.is_exploring = False
         
+        self.from_state = None
+        
         # Subscribers
         self.spin_sub = self.create_subscription(Bool, 'robot/spinning',
             self.spin_callback, 10)
@@ -69,16 +71,24 @@ class ImageLocalizer(Node):
                 'dx': msg.objects.data[9],
                 'dy': msg.objects.data[10]
             }
+            self.get_logger().info(f"Object width: {obj['width']}, height: {obj['height']}")
+            self.get_logger().info(f"Object center: {obj['dx'] + obj['width'] // 2}")
             if self.object_available_to_mark(obj['id']):
                 if self.is_spinning:
+                    self.from_state = 'spin'
                     self.spin_stop_pub.publish(Bool(data=True))
                 elif self.is_exploring:
+                    self.from_state = 'explore'
                     self.explore_pub.publish(Bool(data=False))
                 self.get_logger().info(f"New object detected: {obj['id']}")
                 self.rotate_to_center_object(obj)
             else:
                 self.get_logger().warn(f"Object already marked or not in the target list, resuming spinning")
-                if not self.is_spinning and not self.is_exploring:
+                if self.from_state == 'spin':
+                    self.from_state = None
+                    self.spin_resume_pub.publish(Bool(data=True))
+                elif self.from_state == 'explore':
+                    self.from_state = None
                     self.explore_pub.publish(Bool(data=True))
         else:
             self.get_logger().warn("No object detected")
@@ -90,11 +100,11 @@ class ImageLocalizer(Node):
         
     
     def spin_callback(self, msg):
-        is_spinning = msg.data
-    
+        self.is_spinning = msg.data
+
     
     def explore_callback(self, msg):
-        is_exploring = msg.data
+        self.is_exploring = msg.data
     
         
     def object_available_to_mark(self, object_id):
@@ -138,13 +148,13 @@ class ImageLocalizer(Node):
         marker.header = Header(frame_id="map", stamp=self.get_clock().now().to_msg())
         marker.ns = "hazards"
         marker.id = int(obj['id'])
-        marker.type = Marker.SPHERE
+        marker.type = Marker.CUBE
         marker.action = Marker.ADD
         self.get_logger().info(f"Available keys: {list(self.marked_objects.keys())}")
         position = self.marked_objects[obj['id']]['position']
         marker.pose = Pose(position=Point(x=position.x, y=position.y, z=position.z))
         marker.scale = Vector3(x=0.2, y=0.2, z=0.2)
-        marker.color = ColorRGBA(r=1.0, g=0.0, b=0.0, a=1.0)
+        marker.color = ColorRGBA(r=0.0, g=1.0, b=0.0, a=1.0)
         marker.lifetime = Duration(sec=0, nanosec=0)
 
         self.harzard_pub.publish(marker)
@@ -159,7 +169,7 @@ class ImageLocalizer(Node):
             point = PointStamped()
             point.header.frame_id = "laser"
             point.header.stamp = self.last_scan_time
-            point.point.x = self.object_distence
+            point.point.x = - self.object_distence
             point.point.y = 0.0
             point.point.z = 0.0
             
