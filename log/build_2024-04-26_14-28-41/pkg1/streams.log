@@ -1,0 +1,23 @@
+[3.277s] Invoking command in '/home/haocheng/Rosbot_workspace/build/pkg1': PYTHONPATH=/home/haocheng/Rosbot_workspace/build/pkg1/prefix_override:/home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/haocheng/Rosbot_workspace/build/pkg1/build --no-deps symlink_data --force
+[4.241s] running develop
+[4.749s] running egg_info
+[4.749s] writing pkg1.egg-info/PKG-INFO
+[4.752s] writing dependency_links to pkg1.egg-info/dependency_links.txt
+[4.752s] writing entry points to pkg1.egg-info/entry_points.txt
+[4.752s] writing requirements to pkg1.egg-info/requires.txt
+[4.752s] writing top-level names to pkg1.egg-info/top_level.txt
+[4.755s] reading manifest file 'pkg1.egg-info/SOURCES.txt'
+[4.756s] writing manifest file 'pkg1.egg-info/SOURCES.txt'
+[4.764s] running build_ext
+[4.765s] Creating /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1.egg-link (link to .)
+[4.765s] Installing exploration_manager script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+[4.766s] Installing explore script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+[4.766s] Installing goinitial script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+[4.766s] Installing object_detection_mover script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+[4.766s] 
+[4.766s] Installed /home/haocheng/Rosbot_workspace/build/pkg1
+[4.767s] running symlink_data
+[4.767s] symbolically linking /home/haocheng/Rosbot_workspace/build/pkg1/resource/pkg1 -> /home/haocheng/Rosbot_workspace/install/pkg1/share/ament_index/resource_index/packages
+[4.767s] symbolically linking /home/haocheng/Rosbot_workspace/build/pkg1/package.xml -> /home/haocheng/Rosbot_workspace/install/pkg1/share/pkg1
+[4.767s] symbolically linking /home/haocheng/Rosbot_workspace/build/pkg1/launch/pkg1.launch.py -> /home/haocheng/Rosbot_workspace/install/pkg1/share/pkg1/launch
+[4.865s] Invoked command in '/home/haocheng/Rosbot_workspace/build/pkg1' returned '0': PYTHONPATH=/home/haocheng/Rosbot_workspace/build/pkg1/prefix_override:/home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/haocheng/Rosbot_workspace/build/pkg1/build --no-deps symlink_data --force

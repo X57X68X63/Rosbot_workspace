@@ -1,12 +1,13 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Header, ColorRGBA
 from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Point, Pose, Vector3
 from tf2_geometry_msgs.tf2_geometry_msgs import PointStamped
 from tf2_ros import TransformListener, Buffer
 from find_object_2d.msg import ObjectsStamped 
 from visualization_msgs.msg import Marker
+from builtin_interfaces.msg import Duration
 
 
 markers = {
@@ -78,7 +79,7 @@ class ImageLocalizer(Node):
             else:
                 self.get_logger().warn(f"Object already marked or not in the target list, resuming spinning")
                 if not self.is_spinning and not self.is_exploring:
-                    self.spin_resume_pub.publish(Bool(data=True))
+                    self.explore_pub.publish(Bool(data=True))
         else:
             self.get_logger().warn("No object detected")
         
@@ -130,7 +131,26 @@ class ImageLocalizer(Node):
             self.get_logger().info("Object marked")
         else:
             self.get_logger().info(f"Rotating to center object: {center_x}")
-        pass
+    
+    
+    def publish_harzard_marker(self, obj):
+        marker = Marker()
+        marker.header = Header(frame_id="map", stamp=self.get_clock().now().to_msg())
+        marker.ns = "hazards"
+        marker.id = int(obj['id'])
+        marker.type = Marker.SPHERE
+        marker.action = Marker.ADD
+        self.get_logger().info(f"Available keys: {list(self.marked_objects.keys())}")
+        position = self.marked_objects[obj['id']]['position']
+        marker.pose = Pose(position=Point(x=position.x, y=position.y, z=position.z))
+        marker.scale = Vector3(x=0.2, y=0.2, z=0.2)
+        marker.color = ColorRGBA(r=1.0, g=0.0, b=0.0, a=1.0)
+        marker.lifetime = Duration(sec=0, nanosec=0)
+
+        self.harzard_pub.publish(marker)
+        self.get_logger().info('Published marker for hazard: ' + obj['name'])
+
+        
         
 
     def mark_object(self, obj):
@@ -152,6 +172,7 @@ class ImageLocalizer(Node):
                     'position': transform.point
                 }
                 # TODO: Publish the marker for the object
+                self.publish_harzard_marker(obj)
 
             except Exception as e:
                 self.get_logger().error(f"Error transforming point: {str(e)}")

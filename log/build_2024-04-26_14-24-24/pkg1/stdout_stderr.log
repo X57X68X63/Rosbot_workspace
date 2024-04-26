@@ -1,0 +1,52 @@
+running egg_info
+creating ../../build/pkg1/pkg1.egg-info
+writing ../../build/pkg1/pkg1.egg-info/PKG-INFO
+writing dependency_links to ../../build/pkg1/pkg1.egg-info/dependency_links.txt
+writing entry points to ../../build/pkg1/pkg1.egg-info/entry_points.txt
+writing requirements to ../../build/pkg1/pkg1.egg-info/requires.txt
+writing top-level names to ../../build/pkg1/pkg1.egg-info/top_level.txt
+writing manifest file '../../build/pkg1/pkg1.egg-info/SOURCES.txt'
+reading manifest file '../../build/pkg1/pkg1.egg-info/SOURCES.txt'
+writing manifest file '../../build/pkg1/pkg1.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/haocheng/Rosbot_workspace/build/pkg1/build
+creating /home/haocheng/Rosbot_workspace/build/pkg1/build/lib
+creating /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+copying pkg1/goinitial.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+copying pkg1/__init__.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+copying pkg1/ExplorationManager.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+copying pkg1/spin.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+copying pkg1/test.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+copying pkg1/marker_map.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+running install
+running install_lib
+creating /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/goinitial.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/__init__.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/ExplorationManager.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/spin.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/test.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/marker_map.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/goinitial.py to goinitial.cpython-310.pyc
+byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/ExplorationManager.py to ExplorationManager.cpython-310.pyc
+byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/spin.py to spin.cpython-310.pyc
+byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/test.py to test.cpython-310.pyc
+byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/marker_map.py to marker_map.cpython-310.pyc
+running install_data
+creating /home/haocheng/Rosbot_workspace/install/pkg1/share/ament_index
+creating /home/haocheng/Rosbot_workspace/install/pkg1/share/ament_index/resource_index
+creating /home/haocheng/Rosbot_workspace/install/pkg1/share/ament_index/resource_index/packages
+copying resource/pkg1 -> /home/haocheng/Rosbot_workspace/install/pkg1/share/ament_index/resource_index/packages
+copying package.xml -> /home/haocheng/Rosbot_workspace/install/pkg1/share/pkg1
+creating /home/haocheng/Rosbot_workspace/install/pkg1/share/pkg1/launch
+copying launch/pkg1.launch.py -> /home/haocheng/Rosbot_workspace/install/pkg1/share/pkg1/launch
+running install_egg_info
+Copying ../../build/pkg1/pkg1.egg-info to /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1-0.0.0-py3.10.egg-info
+running install_scripts
+Installing exploration_manager script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+Installing explore script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+Installing goinitial script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+Installing object_detection_mover script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+writing list of installed files to '/home/haocheng/Rosbot_workspace/build/pkg1/install.log'

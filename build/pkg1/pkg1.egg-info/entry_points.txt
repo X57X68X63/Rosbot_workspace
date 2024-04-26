@@ -1,0 +1,6 @@
+[console_scripts]
+exploration_manager = pkg1.ExplorationManager:main
+explore = pkg1.explore_controller:main
+goinitial = pkg1.goinitial:main
+object_detection_mover = pkg1.test:main
+

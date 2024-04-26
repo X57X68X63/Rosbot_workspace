@@ -1,0 +1,54 @@
+[1.822s] Invoking command in '/home/haocheng/Rosbot_workspace/src/pkg1': PYTHONPATH=/home/haocheng/Rosbot_workspace/build/pkg1/prefix_override:/home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/pkg1 build --build-base /home/haocheng/Rosbot_workspace/build/pkg1/build install --record /home/haocheng/Rosbot_workspace/build/pkg1/install.log --single-version-externally-managed install_data
+[2.295s] running egg_info
+[2.296s] creating ../../build/pkg1/pkg1.egg-info
+[2.296s] writing ../../build/pkg1/pkg1.egg-info/PKG-INFO
+[2.296s] writing dependency_links to ../../build/pkg1/pkg1.egg-info/dependency_links.txt
+[2.297s] writing entry points to ../../build/pkg1/pkg1.egg-info/entry_points.txt
+[2.297s] writing requirements to ../../build/pkg1/pkg1.egg-info/requires.txt
+[2.297s] writing top-level names to ../../build/pkg1/pkg1.egg-info/top_level.txt
+[2.297s] writing manifest file '../../build/pkg1/pkg1.egg-info/SOURCES.txt'
+[2.299s] reading manifest file '../../build/pkg1/pkg1.egg-info/SOURCES.txt'
+[2.299s] writing manifest file '../../build/pkg1/pkg1.egg-info/SOURCES.txt'
+[2.299s] running build
+[2.299s] running build_py
+[2.300s] creating /home/haocheng/Rosbot_workspace/build/pkg1/build
+[2.300s] creating /home/haocheng/Rosbot_workspace/build/pkg1/build/lib
+[2.300s] creating /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+[2.300s] copying pkg1/goinitial.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+[2.300s] copying pkg1/__init__.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+[2.300s] copying pkg1/ExplorationManager.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+[2.300s] copying pkg1/spin.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+[2.301s] copying pkg1/test.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+[2.301s] copying pkg1/marker_map.py -> /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1
+[2.301s] running install
+[2.301s] running install_lib
+[2.303s] creating /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+[2.303s] copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/goinitial.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+[2.304s] copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/__init__.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+[2.304s] copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/ExplorationManager.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+[2.304s] copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/spin.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+[2.304s] copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/test.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+[2.304s] copying /home/haocheng/Rosbot_workspace/build/pkg1/build/lib/pkg1/marker_map.py -> /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1
+[2.306s] byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/goinitial.py to goinitial.cpython-310.pyc
+[2.307s] byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/__init__.py to __init__.cpython-310.pyc
+[2.307s] byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/ExplorationManager.py to ExplorationManager.cpython-310.pyc
+[2.308s] byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/spin.py to spin.cpython-310.pyc
+[2.308s] byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/test.py to test.cpython-310.pyc
+[2.309s] byte-compiling /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1/marker_map.py to marker_map.cpython-310.pyc
+[2.309s] running install_data
+[2.309s] creating /home/haocheng/Rosbot_workspace/install/pkg1/share/ament_index
+[2.309s] creating /home/haocheng/Rosbot_workspace/install/pkg1/share/ament_index/resource_index
+[2.309s] creating /home/haocheng/Rosbot_workspace/install/pkg1/share/ament_index/resource_index/packages
+[2.309s] copying resource/pkg1 -> /home/haocheng/Rosbot_workspace/install/pkg1/share/ament_index/resource_index/packages
+[2.310s] copying package.xml -> /home/haocheng/Rosbot_workspace/install/pkg1/share/pkg1
+[2.310s] creating /home/haocheng/Rosbot_workspace/install/pkg1/share/pkg1/launch
+[2.310s] copying launch/pkg1.launch.py -> /home/haocheng/Rosbot_workspace/install/pkg1/share/pkg1/launch
+[2.310s] running install_egg_info
+[2.313s] Copying ../../build/pkg1/pkg1.egg-info to /home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages/pkg1-0.0.0-py3.10.egg-info
+[2.314s] running install_scripts
+[2.354s] Installing exploration_manager script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+[2.354s] Installing explore script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+[2.354s] Installing goinitial script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+[2.354s] Installing object_detection_mover script to /home/haocheng/Rosbot_workspace/install/pkg1/lib/pkg1
+[2.355s] writing list of installed files to '/home/haocheng/Rosbot_workspace/build/pkg1/install.log'
+[2.390s] Invoked command in '/home/haocheng/Rosbot_workspace/src/pkg1' returned '0': PYTHONPATH=/home/haocheng/Rosbot_workspace/build/pkg1/prefix_override:/home/haocheng/Rosbot_workspace/install/pkg1/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/pkg1 build --build-base /home/haocheng/Rosbot_workspace/build/pkg1/build install --record /home/haocheng/Rosbot_workspace/build/pkg1/install.log --single-version-externally-managed install_data
