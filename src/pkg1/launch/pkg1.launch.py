@@ -37,6 +37,12 @@ def generate_launch_description():
             executable='exploration_manager',
             name='exploration_manager',
             output='screen'
+        ),
+
+        Node(
+            package='pkg1',
+            executable='image_localizer',
+            name='image_localizer',
+            output='screen'
         )
-        
     ])

@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'object_detection_mover = pkg1.test:main',
             'exploration_manager = pkg1.ExplorationManager:main',
+            f'image_localizer = {package_name}.image_localizer:main',
             f'goinitial = {package_name}.goinitial:main',
             f'explore = {package_name}.explore_controller:main'
         ],

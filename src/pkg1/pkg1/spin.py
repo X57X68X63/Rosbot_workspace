@@ -20,9 +20,9 @@ class PeriodicSpinner(Node):
 
 
         self.get_logger().info('starts spinning')
-        for i in range(30):
+        for i in range(60):
             twist = Twist()
-            twist.angular.z = 1.0  # Adjust spin speed
+            twist.angular.z = 0.5  # Adjust spin speed
             self.publisher.publish(twist)
             time.sleep(0.2)
         self.get_logger().info('stopped spinning')

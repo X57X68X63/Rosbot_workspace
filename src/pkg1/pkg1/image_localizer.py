@@ -37,10 +37,10 @@ class ImageLocalizer(Node):
         self.from_state = None
         
         # Subscribers
-        self.spin_sub = self.create_subscription(Bool, 'robot/spinning',
-            self.spin_callback, 10)
-        self.explore_sub = self.create_subscription(Bool, 'robot/exploring',
-            self.explore_callback, 10)
+        # self.spin_sub = self.create_subscription(Bool, 'robot/spinning',
+        #     self.spin_callback, 10)
+        # self.explore_sub = self.create_subscription(Bool, 'robot/exploring',
+        #     self.explore_callback, 10)
         self.obj_sub = self.create_subscription(ObjectsStamped, '/objectsStamped', 
             self.object_callback, 10)
         self.laser_sub = self.create_subscription(LaserScan, '/scan', 
@@ -48,10 +48,11 @@ class ImageLocalizer(Node):
         
         # Publishers
         self.twist_pub = self.create_publisher(Twist, 'cmd_vel', 10)
-        self.spin_stop_pub = self.create_publisher(Bool, 'command/stop', 10)
-        self.spin_resume_pub = self.create_publisher(Bool, 'command/resume', 10)
-        self.explore_pub = self.create_publisher(Bool, 'explore/resume', 10)
         self.harzard_pub = self.create_publisher(Marker, '/hazards', 10)
+        self.state_pub = self.create_publisher(Bool, 'robot/state', 10)
+        # self.spin_stop_pub = self.create_publisher(Bool, 'command/stop', 10)
+        # self.spin_resume_pub = self.create_publisher(Bool, 'command/resume', 10)
+        # self.explore_pub = self.create_publisher(Bool, 'explore/resume', 10)
         
         # TF2
         self.tf_buffer = Buffer()
@@ -75,23 +76,31 @@ class ImageLocalizer(Node):
             }
             self.get_logger().info(f"Object width: {obj['width']}, height: {obj['height']}")
             self.get_logger().info(f"Object center: {obj['dx'] + obj['width'] // 2}")
+            # if self.is_spinning or self.is_exploring or self.from_state is not None:
             if self.object_available_to_mark(obj['id']):
-                if self.is_spinning:
-                    self.from_state = 'spin'
-                    self.spin_stop_pub.publish(Bool(data=True))
-                elif self.is_exploring:
-                    self.from_state = 'explore'
-                    self.explore_pub.publish(Bool(data=False))
+                # TODO: condition of over spinned object
+                # if self.is_spinning:
+                #     self.from_state = 'spin'
+                #     self.get_logger().info("From ImgL: Stopping spin")
+                #     self.spin_stop_pub.publish(Bool(data=True))
+                #     self.spin_resume_pub.publish(Bool(data=False))
+                # elif self.is_exploring:
+                #     self.from_state = 'explore'
+                #     self.get_logger().info("From ImgL: Stopping explore")
+                #     self.explore_pub.publish(Bool(data=False))
                 self.get_logger().info(f"New object detected: {obj['id']}")
                 self.rotate_to_center_object(obj)
             else:
-                self.get_logger().warn(f"Object already marked or not in the target list, resuming spinning")
-                if self.from_state == 'spin':
-                    self.from_state = None
-                    self.spin_resume_pub.publish(Bool(data=True))
-                elif self.from_state == 'explore':
-                    self.from_state = None
-                    self.explore_pub.publish(Bool(data=True))
+                self.get_logger().warn(f"Object already marked or not in the target list, resuming")
+                # if self.from_state == 'spin':
+                #     self.from_state = None
+                #     self.get_logger().info("From ImgL: Resuming spin")
+                #     self.spin_stop_pub.publish(Bool(data=False))
+                #     self.spin_resume_pub.publish(Bool(data=True))
+                # elif self.from_state == 'explore':
+                #     self.from_state = None
+                #     self.get_logger().info("From ImgL: Resuming explore")
+                #     self.explore_pub.publish(Bool(data=True))
         else:
             self.get_logger().warn("No object detected")
         
@@ -101,17 +110,24 @@ class ImageLocalizer(Node):
         self.object_distence = msg.ranges[0]
         
     
-    def spin_callback(self, msg):
-        self.is_spinning = msg.data
+    # def spin_callback(self, msg):
+    #     self.is_spinning = msg.data
+    #     if self.is_spinning:
+    #         self.get_logger().info("From ImgL: Robot is spinning")
 
     
-    def explore_callback(self, msg):
-        self.is_exploring = msg.data
+    # def explore_callback(self, msg):
+    #     self.is_exploring = msg.data
+    #     if self.is_exploring:
+    #         self.get_logger().info("From ImgL: Robot is exploring")
     
         
     def object_available_to_mark(self, object_id):
         if not (object_id in self.marked_objects) and (object_id in markers):
+            self.state_pub.publish(Bool(data=False))
             return True
+        
+        self.state_pub.publish(Bool(data=True))
         return False  
 
     
