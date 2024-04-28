@@ -29,80 +29,70 @@ markers = {
 class ImageLocalizer(Node):
     def __init__(self):
         super().__init__('image_localizer')
-        
-        # Variables
-        self.working_state = False
-        
-        # Subscribers
-        # self.spin_sub = self.create_subscription(Bool, 'robot/spinning',
-        #     self.spin_callback, 10)
-        # self.explore_sub = self.create_subscription(Bool, 'robot/exploring',
-        #     self.explore_callback, 10)
+
+        self.twist_pub = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.harzard_pub = self.create_publisher(Marker, '/hazards', 10)
+        self.state_pub = self.create_publisher(Bool, 'working/state', 10)
+
         self.obj_sub = self.create_subscription(ObjectsStamped, '/objectsStamped', 
             self.object_callback, 10)
         self.laser_sub = self.create_subscription(LaserScan, '/scan', 
             self.laser_callback, 10)
         self.state_sub = self.create_subscription(Bool, 'working/state', 
             self.state_callback, 10)
-        
-        # Publishers
-        self.twist_pub = self.create_publisher(Twist, 'cmd_vel', 10)
-        self.harzard_pub = self.create_publisher(Marker, '/hazards', 10)
-        self.state_pub = self.create_publisher(Bool, 'working/state', 10)
-        # self.spin_stop_pub = self.create_publisher(Bool, 'command/stop', 10)
-        # self.spin_resume_pub = self.create_publisher(Bool, 'command/resume', 10)
-        # self.explore_pub = self.create_publisher(Bool, 'explore/resume', 10)
-        
-        # TF2
+ 
+        self.working_state = None 
+
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
-        
-        # Marked objects
+
         self.marked_objects = {}
         self.object_distence = -1
         
 
     def object_callback(self, msg):
-        self.get_logger().info(f"Object detected: {self.marked_objects}")
-        if len(msg.objects.data) > 0:
-            obj = {
-                'id': msg.objects.data[0],
-                'width': msg.objects.data[1],
-                'height': msg.objects.data[2],
-                'dx': msg.objects.data[9],
-                'dy': msg.objects.data[10],
-                'h': msg.objects.data[2:11]
-            }
-            self.get_logger().info(f"Object width: {obj['width']}, height: {obj['height']}")
-            self.get_logger().info(f"Object center: {obj['dx'] + obj['width'] // 2}")
 
-            if self.object_available_to_mark(obj['id']):
-                if not self.working_state:
-                    self.working_state = True
-                    self.state_pub.publish(Bool(data=False))
-                    self.get_logger().info(f"New object detected: {obj['id']}, state set to False")
-                self.rotate_to_center_object(obj)
-            else:
-                self.get_logger().warn(f"Object already marked or not in the target list")
+        if self.working_state is None:
+            self.get_logger().warn("Working state is unknown; waiting for state update.")
+            return
+        
+        if len(msg.objects.data) > 0:
+
+            self.get_logger().info(f"Object detected: {self.marked_objects}, interruption signal sent")
+            if not self.working_state:
+                self.get_logger().info("Interrupting other activities due to object detection.")
+                self.state_pub.publish(Bool(data=False))
+
+                obj = {
+                    'id': msg.objects.data[0],
+                    'width': msg.objects.data[1],
+                    'height': msg.objects.data[2],
+                    'dx': msg.objects.data[9],
+                    'dy': msg.objects.data[10],
+                    'h': msg.objects.data[2:11]
+                }
+
+                self.get_logger().info(f"Object width: {obj['width']}, height: {obj['height']}")
+                self.get_logger().info(f"Object center: {obj['dx'] + obj['width'] // 2}")
+
+                if self.object_available_to_mark(obj['id']):
+                    self.get_logger().info(f"Rotating to object")
+                    self.rotate_to_center_object(obj)
+                else:
+                    self.get_logger().warn(f"Object already marked or not in the target list.")
         else:
             if self.working_state:
-                self.working_state = False
+                self.get_logger().warn("No object detected, state set to True, resuming actions")
                 self.state_pub.publish(Bool(data=True))
-                self.get_logger().warn("No object detected, state set to True")
+                self.working_state = True
 
-        
-    
     def laser_callback(self, msg):
         self.last_scan_time = msg.header.stamp
         self.object_distence = msg.ranges[0]
 
-
     def state_callback(self, msg):
         self.get_logger().info(f"State received: {msg.data}")
-        if msg.data:
-            self.working_state = False
-        else:
-            self.working_state = True
+        self.working_state = msg.data
 
         
     def object_available_to_mark(self, object_id):
@@ -111,10 +101,6 @@ class ImageLocalizer(Node):
         else:
             return False  
 
-    
-    
-    # TODO: Implement the checker for current action status: spinning or exploring
-    # idea: use another node to record the status and publish to the topic
     def rotate_to_center_object(self, obj):
         
         center_x = obj['dx'] + obj['width'] // 2
@@ -139,11 +125,34 @@ class ImageLocalizer(Node):
         self.twist_pub.publish(twist_msg)
         if twist_msg.angular.z == 0.0:
             self.mark_object(obj)
-            self.get_logger().info("Object marked")
+            self.get_logger().info("Object marked, recorded and posted to /hazards. resuming normal operations.")
+            self.state_pub.publish(Bool(data=True)) 
         else:
             self.get_logger().info(f"Rotating to center object: {center_x}")
-    
-    
+
+    def mark_object(self, obj):
+        if self.object_distence != -1:
+            point = PointStamped()
+            point.header.frame_id = "laser"
+            point.header.stamp = self.last_scan_time
+            point.point.x = - self.object_distence
+            point.point.y = 0.0
+            point.point.z = 0.0
+            
+            try:
+                transform = self.tf_buffer.transform(point, "odometry/filteredom")
+                self.get_logger().info(f"Object marked at: {transform.point}")
+                
+                self.marked_objects[obj['id']] = {
+                    'name': markers[obj['id']],
+                    'position': transform.point
+                }
+                self.publish_harzard_marker(obj)
+
+            except Exception as e:
+                self.get_logger().error(f"Error transforming point: {str(e)}")
+        
+        
     def publish_harzard_marker(self, obj):
         marker = Marker()
         marker.header = Header(frame_id="map", stamp=self.get_clock().now().to_msg())
@@ -161,34 +170,6 @@ class ImageLocalizer(Node):
         self.harzard_pub.publish(marker)
         self.get_logger().info('Published marker for hazard: ' + obj['name'])
 
-        
-        
-
-    def mark_object(self, obj):
-        # Record the object's position
-        if self.object_distence != -1:
-            point = PointStamped()
-            point.header.frame_id = "laser"
-            point.header.stamp = self.last_scan_time
-            point.point.x = - self.object_distence
-            point.point.y = 0.0
-            point.point.z = 0.0
-            
-            try:
-                transform = self.tf_buffer.transform(point, "odom")
-                self.get_logger().info(f"Object marked at: {transform.point}")
-                
-                self.marked_objects[obj['id']] = {
-                    'name': markers[obj['id']],
-                    'position': transform.point
-                }
-                # TODO: Publish the marker for the object
-                self.publish_harzard_marker(obj)
-
-            except Exception as e:
-                self.get_logger().error(f"Error transforming point: {str(e)}")
-        
-        
 
 
 def main(args=None):
