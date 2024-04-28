@@ -16,40 +16,46 @@ class ExplorationManager(Node):
         self.get_logger().info("Exploration Manager initialized.")
  
     def setup_publishers(self):
+        self.get_logger().info("Setting up publishers...")
         self.spin_pub = self.create_publisher(Twist,'/cmd_vel',10)
         self.explore_control_pub = self.create_publisher(Bool, 'explore/resume', 10)
-        self.state_pub = self.create_publisher(Bool, 'robot/state', 10)
+        self.state_pub = self.create_publisher(Bool, 'working/state', 10)
  
     def setup_subscribers(self):
+        self.get_logger().info("Setting up subscribers...")
         self.start_subscription = self.create_subscription(
             Bool, 'exploration_control/start', self.handle_start_exploration, 10)
         self.odom_subscriber = self.create_subscription(
             Odometry, '/odometry/filtered', self.odom_callback, 10)
         self.state_sub = self.create_subscription(
-            Bool, 'robot/state', self.handle_state_change, 10)
+            Bool, 'working/state', self.handle_state_change, 10)
  
     def initialize_flags(self):
+        self.get_logger().info("Initializing flags...")
         self.is_spinning = False  # Indicates if the robot is currently spinning
         self.is_exploring = False  # Indicates if the robot is currently exploring
+        self.eplisrunning = False
         self.robot_active = False  # Represents the overall activity state of the robot
-        
+        self.should_continue_spinning =True
+        self.should_continue_exploring = True
         self.initial_spin_done = False
         self.last_position = None
         self.total_distance = 0.0
-        self.distance_threshold = 0.35  # in meters
+        self.distance_threshold = 0.55  # in meters
  
-# ======================================Call Backs==================================================
- 
+
     def handle_start_exploration(self, msg):
         self.get_logger().info(f"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa{msg.data}")
         if msg.data:
             self.get_logger().info("Received starting exploration signal")
+            self.should_continue_spinning = True
             if self.initial_spin_done is False:
                 self.initial_spin()
+            if self.eplisrunning is False:
+                self.start_exploration()
             self.is_spinning = True  
             self.is_exploring = True  
             self.state_pub.publish(Bool(data=True))
-            self.start_exploration()
         else:
             self.get_logger().info("FUCK YOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU")
  
@@ -79,28 +85,20 @@ class ExplorationManager(Node):
         self.last_position = current_position
     
     def handle_state_change(self, msg):
-        # React to the state message indicating whether to stop or resume activities.
-        if msg.data:
-            # Resume all previously active operations.
-            self.get_logger().info("State change received: Resume all activities.")
-            if not self.is_spinning:
-                self.is_spinning = True
-                self.spin_robot()  # Ensure this method sets up spinning properly.
-            if not self.is_exploring:
-                self.is_exploring = True
-                self.publish_explore_control(True)  # Resume exploration.
-            self.state_pub.publish(Bool(data=True))  # Confirm the active state.
-        else:
-            # Stop all currently active operations.
-            self.get_logger().info("State change received: Stop all activities.")
-            self.is_spinning = False
+        if not msg.data:
+            self.get_logger().info("External stop received.")
+            self.should_continue_spinning = False
+            self.should_continue_exploring = False
             self.is_exploring = False
-            self.spin_pub.publish(Twist())  # Stop any spinning.
-            self.publish_explore_control(False)  # Signal exploration to pause.
+            self.spin_pub.publish(Twist())  # Send zero velocities to stop spinning.
+            self.explore_control_pub.publish(Bool(data=False))  # Signal exploration to pause.
             self.state_pub.publish(Bool(data=False))  # Confirm the stopped state.
- 
- 
-# ======================================Actrual Functions==================================================
+        else:
+            self.get_logger().info("External resume received.")
+            self.should_continue_spinning = True
+            self.should_continue_exploring = True
+            if not self.is_exploring:
+                self.start_exploration()
  
     def initial_spin(self):
         self.get_logger().info("Checking condition for initial spinning")
@@ -108,38 +106,42 @@ class ExplorationManager(Node):
         self.spin_robot()  # Make sure spin_robot handles spinning appropriately.
         self.publish_explore_control(True)  # Consider the purpose of this control. Does it resume exploration?
         self.initial_spin_done = True
+        self.should_continue_spinning = False 
  
     def start_exploration(self):
         self.get_logger().info("Launching Explore Lite")
         self.is_exploring = True
-        self.exploration_state_pub.publish(Bool(data=True))  # Notify system that exploration has started
+        self.eplisrunning = True
+        self.state_pub.publish(Bool(data=True))  # Notify system that exploration has started
         try:
             process = subprocess.Popen(['ros2', 'launch', 'explore_lite', 'explore.launch.py'])
             self.get_logger().info("Explore Lite launched successfully, PID: {}".format(process.pid))
         except Exception as e:
             self.get_logger().error(f"Failed to launch Explore Lite: {str(e)}")
             self.is_exploring = False
-            self.exploration_state_pub.publish(Bool(data=False))
+            self.state_pub.publish(Bool(data=False))
  
     def spin_robot(self):
-        self.is_spinning = True
-        self.spin_state_pub.publish(Bool(data=True))
-        self.get_logger().info("Starting Spin")
-        twist = Twist()
-        twist.angular.z = 0.5
+        if self.should_continue_spinning:
+            self.is_spinning = True
+            self.state_pub.publish(Bool(data=True))
+            self.get_logger().info("Starting Spin")
+            twist = Twist()
+            twist.angular.z = 0.5
         try:
-            for i in range(30):
+            for i in range(25):
                 if not self.should_continue_spinning:  # Define this flag in initialize_flags if used
                     self.get_logger().info(f"Interrupting Spin at iteration {i}")
                     break
                 self.spin_pub.publish(twist)
+                time.sleep(0.5) # IMPORTANT: DON'T REMOVE THIS LINE
         finally:
             self.cleanup_after_spin()
  
     def cleanup_after_spin(self):
         self.get_logger().info('Spin finished or interrupted.')
         self.is_spinning = False
-        self.spin_state_pub.publish(Bool(data=False))
+        # self.state_pub.publish(Bool(data=False))
  
     def calculate_distance(self, last_pos, current_pos):
         return math.sqrt((last_pos.x - current_pos.x) ** 2 + (last_pos.y - current_pos.y) ** 2)
