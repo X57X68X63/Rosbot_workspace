@@ -68,7 +68,7 @@ Explore::Explore()
   this->declare_parameter<float>("potential_scale", 1e-3);
   this->declare_parameter<float>("orientation_scale", 0.0);
   this->declare_parameter<float>("gain_scale", 1.0);
-  this->declare_parameter<float>("min_frontier_size", 0.5);
+  this->declare_parameter<float>("min_frontier_size", 0.1);
   this->declare_parameter<bool>("return_to_init", true);
 
   this->get_parameter("planner_frequency", planner_frequency_);
