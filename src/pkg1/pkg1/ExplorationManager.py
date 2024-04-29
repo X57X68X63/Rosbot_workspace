@@ -43,7 +43,7 @@ class ExplorationManager(Node):
         self.distance_threshold = 0.35  # in meters
         
  #================================================================================
-
+# Done >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     def handle_start_exploration(self, msg):
         self.get_logger().info("Handling start exploration launched")
 
@@ -67,6 +67,7 @@ class ExplorationManager(Node):
             self.spin_pub.publish(Twist())  
             self.state_pub.publish(Bool(data=False))
 
+
     def initial_spin(self):
         self.get_logger().info("Initial spinning")
         self.spin_robot()
@@ -85,6 +86,7 @@ class ExplorationManager(Node):
         finally:
             self.get_logger().info('Spin finished or interrupted.')
             self.is_spinning = False
+# Done <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     
     def handle_state_change(self, msg):
         if not msg.data:
@@ -122,7 +124,7 @@ class ExplorationManager(Node):
             self.is_exploring = False
             self.eplisrunning = False
 
-
+# Done >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     def odom_callback(self, msg):
         current_position = msg.pose.pose.position
         #self.get_logger().info(f"Received new position: {current_position}")
@@ -146,6 +148,8 @@ class ExplorationManager(Node):
             self.spin_robot()
             self.explore_control_pub.publish(Bool(data=True)) 
             self.is_exploring = True
+
+# Done <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
  
 def main(args=None):
     rclpy.init(args=args)

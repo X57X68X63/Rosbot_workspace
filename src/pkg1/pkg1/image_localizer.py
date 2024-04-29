@@ -76,7 +76,6 @@ class ImageLocalizer(Node):
                     'h': data[3:12]
                 }
                 self.get_logger().info(f"Object width: {obj['width']}, height: {obj['height']}")
-                self.get_logger().info(f"Object center: {obj['dx'] + obj['width'] // 2}")
                 self.get_logger().info(f"Rotating to object")
                 self.rotate_to_center_object(obj)
             else:
