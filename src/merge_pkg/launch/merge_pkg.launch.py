@@ -18,15 +18,15 @@ def generate_launch_description():
     return LaunchDescription([
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
-                find_object_2d_launch
+                find_object_2d_launch,
             ]),
             launch_arguments={'some_argument': 'value'}.items(),
         ),
  
         Node(
             package='merge_pkg',
-            executable='start_check',
-            name='start_check',
+            executable='marker_checker',
+            name='marker_checker',
             output='screen',
             emulate_tty=True
         ),

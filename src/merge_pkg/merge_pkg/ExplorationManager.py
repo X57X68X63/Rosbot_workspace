@@ -62,6 +62,7 @@ class ExplorationManager(Node):
         self.initial_spin_done = False
         self.explore_lite_launched = False
         self.robot_started = False
+        
         # Flags that change during exploration
         self.is_spinning = False
         self.is_exploring = False
@@ -205,7 +206,7 @@ class ExplorationManager(Node):
     def launch_explore_lite(self):
         self.get_logger().info("Launching Explore Lite")
         try:
-            process = subprocess.Popen(['ros2', 'launch', 'explore_lite', 'explore_lite.launch.py'])
+            process = subprocess.Popen(['ros2', 'launch', 'explore_lite', 'explore.launch.py'])
             self.get_logger().info("Explore Lite launched successfully, PID: {}".format(process.pid))
             self.explore_lite_launched = True
             self.is_exploring = True
