@@ -29,6 +29,7 @@ class ExplorationManager(Node):
             Odometry, '/odometry/filtered', self.odom_callback, 10)
         self.state_sub = self.create_subscription(
             Bool, 'working/state', self.handle_state_change, 10)
+
  
     def initialize_flags(self):
         self.get_logger().info("Initializing flags...")
@@ -39,12 +40,13 @@ class ExplorationManager(Node):
         self.initial_spin_done = False
         self.last_position = None
         self.total_distance = 0.0
-        self.distance_threshold = 0.55  # in meters
+        self.distance_threshold = 0.35  # in meters
         
  #================================================================================
 
     def handle_start_exploration(self, msg):
         self.get_logger().info("Handling start exploration launched")
+
         if msg.data:
             self.get_logger().info("Received starting exploration signal")
 
@@ -52,11 +54,10 @@ class ExplorationManager(Node):
                 self.get_logger().info("Attempting to initial spin")
                 self.initial_spin()
 
-            if self.eplisrunning is False and not self.is_exploring:
+            if self.eplisrunning is False :
                 self.get_logger().info("Attempting to explore")
                 self.is_exploring = True  
                 self.state_pub.publish(Bool(data=True))
-                self.start_exploration()
             
         else:
             self.get_logger().info("Signal of stsart exploration not received")
@@ -68,23 +69,17 @@ class ExplorationManager(Node):
 
     def initial_spin(self):
         self.get_logger().info("Initial spinning")
-        self.is_spinning = True  
-        self.state_pub.publish(Bool(data=True))
         self.spin_robot()
         self.initial_spin_done = True
 
     def spin_robot(self):
-        if self.should_continue_spinning:
-            self.is_spinning = True
-            self.state_pub.publish(Bool(data=True))
-            self.get_logger().info("Starting Spin")
-            twist = Twist()
-            twist.angular.z = 0.5
+        self.is_spinning = True
+        self.get_logger().info("Starting Spin")
+        twist = Twist()
+        twist.angular.z = 0.3
+
         try:
-            for i in range(25):
-                if not self.should_continue_spinning:  # Define this flag in initialize_flags if used
-                    self.get_logger().info(f"Interrupting Spin at iteration {i}")
-                    break
+            for i in range(30):
                 self.spin_pub.publish(twist)
                 time.sleep(0.5) # IMPORTANT: DON'T REMOVE THIS LINE
         finally:
@@ -96,18 +91,21 @@ class ExplorationManager(Node):
             self.get_logger().info("External stop received.")
             self.is_spinning = False
             self.is_exploring = False
-            self.spin_pub.publish(Twist())  
+            
+            stop_spinning = Twist()
+            stop_spinning.angular.z = 0.0
+            stop_spinning.linear.x = 0.0
+            self.spin_pub.publish(stop_spinning)  
             self.explore_control_pub.publish(Bool(data=False))  
-            self.state_pub.publish(Bool(data=False)) 
-            self.get_logger().info("Exploration is now stopped, additioanl false has been posted to working/state")
-
+           
         else:
             self.get_logger().info("External resume received.")
             if self.eplisrunning: 
                 self.get_logger().info("Explore lite already launched, spinning and resuming exploration")
-                self.spin_robot()
                 self.is_exploring = True
-                self.explore_control_pub.publish(Bool(data=True)) 
+                for i in range(5):
+                    self.explore_control_pub.publish(Bool(data=True)) 
+
             else:
                 self.get_logger().info("Explore lite never launched, starting exploration for the first time")
                 self.start_exploration() 
@@ -115,16 +113,15 @@ class ExplorationManager(Node):
     def start_exploration(self):
         self.get_logger().info("Launching Explore Lite")
         self.is_exploring = True
-        self.eplisrunning = True
-        self.state_pub.publish(Bool(data=True))  # Notify system that exploration has started
         try:
+            self.eplisrunning = True
             process = subprocess.Popen(['ros2', 'launch', 'explore_lite', 'explore.launch.py'])
             self.get_logger().info("Explore Lite launched successfully, PID: {}".format(process.pid))
         except Exception as e:
             self.get_logger().error(f"Failed to launch Explore Lite: {str(e)}")
             self.is_exploring = False
             self.eplisrunning = False
-            self.state_pub.publish(Bool(data=False))
+
 
     def odom_callback(self, msg):
         current_position = msg.pose.pose.position
