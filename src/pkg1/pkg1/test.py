@@ -24,7 +24,7 @@ class ObjectDetectionMover(Node):
     def detection_callback(self, msg):
         for i in msg.objects.data:
             try:
-                if msg.objects.data[0] == 12 and not self.start_signal_sent:
+                if msg.objects.data[0] == 1 and not self.start_signal_sent:
                     self.get_logger().info("Start detected, publishing start exploration command.")
                     START_msg = Bool()
                     START_msg.data = True

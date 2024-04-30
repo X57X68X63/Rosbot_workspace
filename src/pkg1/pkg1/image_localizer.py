@@ -32,97 +32,66 @@ class ImageLocalizer(Node):
 
         self.twist_pub = self.create_publisher(Twist, 'cmd_vel', 10)
         self.harzard_pub = self.create_publisher(Marker, '/hazards', 10)
-        self.state_pub = self.create_publisher(Bool, 'working/state', 10)
-        self.explorecontrol_pub = self.create_publisher(Bool, 'explore/resume', 10)
+        self.pausing_state_pub = self.create_publisher(Bool, 'pausing/state', 10)
 
         self.obj_sub = self.create_subscription(ObjectsStamped, '/objectsStamped', 
             self.object_callback, 10)
         self.laser_sub = self.create_subscription(LaserScan, '/scan', 
             self.laser_callback, 10)
-        self.state_sub = self.create_subscription(Bool, 'working/state', 
-            self.state_callback, 10)
+        self.working_state_sub = self.create_subscription(Bool, 'working/state', 
+            self.working_state_callback, 10)
  
         self.working_state = None 
-
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
-        self.check_list = []
         self.marked_objects = {}
         self.object_distence = -1
         
 
     def object_callback(self, msg):
+        if self.working_state:
 
-        if self.working_state is None:
-            self.get_logger().warn("Working state is unknown; waiting for state update.")
-            return
-        data = []
-        if 0 < len(msg.objects.data) <= 12:
-            data = msg.objects.data
-        elif len(msg.objects.data) > 12:
-            data = msg.objects.data[:12]
-        if len(data) > 0 and self.object_available_to_mark(data[0]):
-            self.get_logger().info(f"Object detected, interruption signal sent")
-            if not self.working_state:
-                
-                self.get_logger().info("Interrupting other activities due to object detection.")
+            if len(msg.objects.data) > 0:
+            
                 obj = {
-                    'id': data[0],
-                    'width': data[1],
-                    'height': data[2],
-                    'dx': data[9],
-                    'dy': data[10],
-                    'h': data[3:12]
+                    'id': msg.objects.data[0],
+                    'width': msg.objects.data[1],
+                    'height': msg.objects.data[2],
+                    'dx': msg.objects.data[9],
+                    'dy': msg.objects.data[10],
+                    'h': msg.objects.data[2:11]
                 }
-                self.get_logger().info(f"Object width: {obj['width']}, height: {obj['height']}")
-                self.get_logger().info(f"Rotating to object")
-                self.rotate_to_center_object(obj)
-            else:
-                self.state_pub.publish(Bool(data=False))
+                if self.object_available_to_mark(obj['id']):
+                    self.get_logger().info("Object detected, sending pause command.")
+                    self.pausing_state_pub.publish(Bool(data=True))  # Command to pause other activities
+                    self.rotate_to_center_object(obj)
+                else:
+                    self.get_logger().warn(f"Object already marked or not in the target list.")
+                    self.get_logger().info(f"Object width: {obj['width']}, height: {obj['height']}")
+                    self.get_logger().info(f"Object center: {obj['dx'] + obj['width'] // 2}")
 
-        else:
-            if self.working_state is False:
-                self.get_logger().warn(f"Object already marked or not in the target list.")
-                #self.state_pub.publish(Bool(data=True))
-                self.explorecontrol_pub.publish(Bool(data=True))
+        elif not self.working_state:  
+            self.pausing_state_pub.publish(Bool(data=False))  
+
 
     def laser_callback(self, msg):
         self.last_scan_time = msg.header.stamp
         self.object_distence = msg.ranges[0]
 
-    def state_callback(self, msg):
-        self.get_logger().info(f"State received: {msg.data}")
+    def working_state_callback(self, msg):
+        self.get_logger().info(f"Working State received: {msg.data}")
         self.working_state = msg.data
 
-        
     def object_available_to_mark(self, object_id):
-        if not (object_id in self.check_list) and (object_id in markers.keys()):
+        if not (object_id in self.marked_objects) and (object_id in markers):
             return True
         else:
             return False  
 
     def rotate_to_center_object(self, obj):
-
-        self.get_logger().info("Starting rotation in rotate_to_center_object")
-
-        # QTransform 
-        H = np.array(obj['h']).reshape(3, 3)
-
-        obj_center_x_ = obj['width'] / 2
-        obj_center_y_ = obj['height'] / 2
-
-        obj_center_x = obj_center_x_ * H[0][0] + obj_center_y_ * H[1][0] + obj['dx']
-        obj_center_y = obj_center_y_ * H[1][1] + obj_center_x_ * H[0][1] + obj['dy']
-
-        w_ = obj_center_x_ * H[0][2] + obj_center_y_ * H[1][2] + H[2][2]
-
-        obj_center_x /= w_
-        obj_center_y /= w_
         
-        center_x = obj_center_x
-
-        # center_x = obj['dx'] + obj['width'] // 2
+        center_x = obj['dx'] + obj['width'] // 2
 
         err_x = 319 - center_x
         self.get_logger().info(f"Object center: {center_x}, error: {err_x}")
@@ -142,16 +111,14 @@ class ImageLocalizer(Node):
             twist_msg.angular.z = 0.0
         
         self.twist_pub.publish(twist_msg)
-        
         if twist_msg.angular.z == 0.0:
-            self.check_list.append(obj['id'])
             self.mark_object(obj)
             self.get_logger().info("Object marked, recorded and posted to /hazards. resuming normal operations.")
+            self.state_pub.publish(Bool(data=True)) 
         else:
             self.get_logger().info(f"Rotating to center object: {center_x}")
 
     def mark_object(self, obj):
-        self.get_logger().info("Marking object, recording and resuming normal operation")
         if self.object_distence != -1:
             point = PointStamped()
             point.header.frame_id = "laser"
@@ -161,19 +128,17 @@ class ImageLocalizer(Node):
             point.point.z = 0.0
             
             try:
-                transform = self.tf_buffer.transform(point, "odom")
+                transform = self.tf_buffer.transform(point, "odometry/filteredom")
                 self.get_logger().info(f"Object marked at: {transform.point}")
-            
-                self.marked_objects[obj['id']] = transform.point
                 
+                self.marked_objects[obj['id']] = {
+                    'name': markers[obj['id']],
+                    'position': transform.point
+                }
                 self.publish_harzard_marker(obj)
 
             except Exception as e:
                 self.get_logger().error(f"Error transforming point: {str(e)}")
-            
-            finally:
-                #self.state_pub.publish(Bool(data=True))
-                self.explorecontrol_pub.publish(Bool(data=True))
         
         
     def publish_harzard_marker(self, obj):
@@ -184,14 +149,14 @@ class ImageLocalizer(Node):
         marker.type = Marker.CUBE
         marker.action = Marker.ADD
         self.get_logger().info(f"Available keys: {list(self.marked_objects.keys())}")
-        position = self.marked_objects[obj['id']]
+        position = self.marked_objects[obj['id']]['position']
         marker.pose = Pose(position=Point(x=position.x, y=position.y, z=position.z))
         marker.scale = Vector3(x=0.2, y=0.2, z=0.2)
         marker.color = ColorRGBA(r=0.0, g=1.0, b=0.0, a=1.0)
         marker.lifetime = Duration(sec=0, nanosec=0)
 
         self.harzard_pub.publish(marker)
-
+        self.get_logger().info('Published marker for hazard: ' + obj['name'])
 
 
 
